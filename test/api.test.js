@@ -180,6 +180,13 @@ test('GET /openapi.json disponibiliza a especificacao', async () => {
   assert.ok(result.body.paths['/api/projects/{projectId}/feedbacks']);
 });
 
+test('GET / apresenta os links publicos da API', async () => {
+  const result = await request('/');
+  assert.equal(result.status, 200);
+  assert.equal(result.body.status, 'online');
+  assert.equal(result.body.documentation, '/api-docs/');
+});
+
 test('campos obrigatorios e URLs invalidas retornam 422', async () => {
   const result = await request('/api/profiles', {
     method: 'POST',

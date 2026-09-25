@@ -12,6 +12,12 @@ function createApp() {
   app.use(cors());
   app.use(express.json({ limit: '100kb' }));
 
+  app.get('/', (req, res) => res.json({
+    name: 'DevShowcase API',
+    status: 'online',
+    documentation: '/api-docs/',
+    health: '/health',
+  }));
   app.get('/health', (req, res) => res.json({ status: 'ok' }));
   app.get('/openapi.json', (req, res) => res.json(openapi));
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapi));
