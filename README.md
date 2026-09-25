@@ -38,6 +38,10 @@ npm run db:init
 
 A documentação interativa Swagger fica em `http://localhost:3000/api-docs`.
 
+Produção: `https://devshowcase-api-7uq6.onrender.com`
+
+Swagger em produção: `https://devshowcase-api-7uq6.onrender.com/api-docs/`
+
 ## Endpoints
 
 | Método | Rota | Descrição |
@@ -126,6 +130,6 @@ Publique este projeto no GitHub e o vídeo como não listado no YouTube. O PDF e
 
 ```text
 Repositório GitHub: https://github.com/SEU_USUARIO/devshowcase-api
-API em produção: https://SEU_SERVICO.onrender.com
+API em produção: https://devshowcase-api-7uq6.onrender.com
 Vídeo no YouTube: https://youtu.be/SEU_VIDEO
 ```
