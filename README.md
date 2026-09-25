@@ -29,6 +29,13 @@ GET http://localhost:3000/health
 
 Se o PostgreSQL já estiver instalado localmente, crie o banco `devshowcase`, copie `.env.example` para `.env`, ajuste a senha na `DATABASE_URL` e execute `npm run db:init`.
 
+No Windows, também é possível gerar o `.env` sem exibir a senha:
+
+```powershell
+.\scripts\configure-env.ps1
+npm run db:init
+```
+
 A documentação interativa Swagger fica em `http://localhost:3000/api-docs`.
 
 ## Endpoints
