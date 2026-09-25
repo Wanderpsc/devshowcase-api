@@ -1,6 +1,4 @@
-runtime: node
-    branch: atividade-2
-    plan: free
+  plan: free
     buildCommand: npm ci
     preDeployCommand: npm run db:init
     startCommand: npm start
