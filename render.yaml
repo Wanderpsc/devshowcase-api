@@ -1,7 +1,5 @@
-services:
-  - type: web
-    name: devshowcase-api
-    runtime: node
+runtime: node
+    branch: atividade-2
     plan: free
     buildCommand: npm ci
     preDeployCommand: npm run db:init
