@@ -1,0 +1,80 @@
+{
+  "info": {
+    "_postman_id": "66d55f17-c961-4a2d-8aa5-devshowcase01",
+    "name": "DevShowcase API",
+    "description": "Colecao para demonstracao dos endpoints da DevShowcase API.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "profileId", "value": "" },
+    { "key": "technologyId", "value": "" },
+    { "key": "projectId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1 - Cadastrar perfil",
+      "event": [{
+        "listen": "test",
+        "script": { "exec": ["pm.test('Perfil criado', () => pm.response.to.have.status(201));", "pm.collectionVariables.set('profileId', pm.response.json().id);"] }
+      }],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"name\": \"Wander Pires Silva Coelho\",\n  \"email\": \"wander@example.com\",\n  \"bio\": \"Desenvolvedor backend\",\n  \"githubUrl\": \"https://github.com/Wanderpsc\"\n}" },
+        "url": "{{baseUrl}}/api/profiles"
+      }
+    },
+    {
+      "name": "2 - Buscar perfil",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/profiles/{{profileId}}" }
+    },
+    {
+      "name": "3 - Cadastrar tecnologia",
+      "event": [{
+        "listen": "test",
+        "script": { "exec": ["pm.test('Tecnologia criada', () => pm.response.to.have.status(201));", "pm.collectionVariables.set('technologyId', pm.response.json().id);"] }
+      }],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"name\": \"Node.js\"\n}" },
+        "url": "{{baseUrl}}/api/technologies"
+      }
+    },
+    {
+      "name": "4 - Listar tecnologias",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/technologies" }
+    },
+    {
+      "name": "5 - Cadastrar projeto",
+      "event": [{
+        "listen": "test",
+        "script": { "exec": ["pm.test('Projeto criado', () => pm.response.to.have.status(201));", "pm.collectionVariables.set('projectId', pm.response.json().id);"] }
+      }],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"profileId\": \"{{profileId}}\",\n  \"title\": \"DevShowcase API\",\n  \"description\": \"API para portfolios de desenvolvedores\",\n  \"repositoryUrl\": \"https://github.com/Wanderpsc/devshowcase-api\",\n  \"technologyIds\": [\"{{technologyId}}\"]\n}" },
+        "url": "{{baseUrl}}/api/projects"
+      }
+    },
+    {
+      "name": "6 - Listar projetos",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/projects" }
+    },
+    {
+      "name": "7 - Cadastrar feedback",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"authorName\": \"Avaliador\",\n  \"comment\": \"Projeto bem estruturado.\",\n  \"rating\": 5\n}" },
+        "url": "{{baseUrl}}/api/projects/{{projectId}}/feedbacks"
+      }
+    },
+    {
+      "name": "8 - Listar feedbacks",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/projects/{{projectId}}/feedbacks" }
+    }
+  ]
+}
