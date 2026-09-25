@@ -7,6 +7,10 @@ function notFoundHandler(req, res) {
 function errorHandler(error, req, res, next) {
   if (res.headersSent) return next(error);
 
+  if (error instanceof SyntaxError && error.type === 'entity.parse.failed') {
+    return res.status(400).json({ error: 'JSON invalido.' });
+  }
+
   if (error instanceof AppError) {
     return res.status(error.statusCode).json({
       error: error.message,

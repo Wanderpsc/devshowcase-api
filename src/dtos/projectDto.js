@@ -27,6 +27,8 @@ function toProjectOutput(project) {
     description: project.description,
     repositoryUrl: project.repositoryUrl,
     demoUrl: project.demoUrl,
+    averageRating: Number(project.averageRating || 0),
+    upvotes: Number(project.upvotes || 0),
     profile: project.profile,
     technologies: project.technologies || [],
     feedbacks: project.feedbacks || [],

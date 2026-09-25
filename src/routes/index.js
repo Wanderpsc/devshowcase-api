@@ -15,6 +15,7 @@ router.get('/technologies', asyncHandler(technologyController.findAll));
 
 router.post('/projects', asyncHandler(projectController.create));
 router.get('/projects', asyncHandler(projectController.findAll));
+router.put('/projects/:projectId/upvote', asyncHandler(projectController.upvote));
 router.post('/projects/:projectId/feedbacks', asyncHandler(feedbackController.create));
 router.get('/projects/:projectId/feedbacks', asyncHandler(feedbackController.findByProjectId));
 

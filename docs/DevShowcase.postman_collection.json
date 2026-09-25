@@ -60,8 +60,8 @@
       }
     },
     {
-      "name": "6 - Listar projetos",
-      "request": { "method": "GET", "url": "{{baseUrl}}/api/projects" }
+      "name": "6 - Filtrar e paginar projetos",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/projects?technology=Node.js&page=1&limit=10" }
     },
     {
       "name": "7 - Cadastrar feedback",
@@ -73,8 +73,25 @@
       }
     },
     {
-      "name": "8 - Listar feedbacks",
+      "name": "8 - Incrementar upvote",
+      "request": { "method": "PUT", "url": "{{baseUrl}}/api/projects/{{projectId}}/upvote" }
+    },
+    {
+      "name": "9 - Listar feedbacks",
       "request": { "method": "GET", "url": "{{baseUrl}}/api/projects/{{projectId}}/feedbacks" }
+    },
+    {
+      "name": "10 - Demonstrar erro 404",
+      "request": { "method": "PUT", "url": "{{baseUrl}}/api/projects/523e4567-e89b-42d3-a456-426614174000/upvote" }
+    },
+    {
+      "name": "11 - Demonstrar erro 400",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{" },
+        "url": "{{baseUrl}}/api/projects"
+      }
     }
   ]
 }

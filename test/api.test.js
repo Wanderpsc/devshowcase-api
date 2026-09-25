@@ -45,18 +45,27 @@ before(() => {
     feedbacks: [],
     createdAt: CREATED_AT,
   });
-  projectRepository.findAll = async () => [{
-    id: PROJECT_ID,
-    title: 'DevShowcase API',
-    description: 'API de portfolio',
-    repositoryUrl: 'https://github.com/wander/devshowcase-api',
-    demoUrl: null,
-    profile: { id: PROFILE_ID, name: 'Wander Pires' },
-    technologies: [{ id: TECHNOLOGY_ID, name: 'Node.js' }],
-    feedbacks: [],
-    createdAt: CREATED_AT,
-  }];
-  feedbackRepository.create = async (input) => ({ id: FEEDBACK_ID, ...input, createdAt: CREATED_AT });
+  projectRepository.findAll = async () => ({
+    projects: [{
+      id: PROJECT_ID,
+      title: 'DevShowcase API',
+      description: 'API de portfolio',
+      repositoryUrl: 'https://github.com/wander/devshowcase-api',
+      demoUrl: null,
+      averageRating: 5,
+      upvotes: 2,
+      profile: { id: PROFILE_ID, name: 'Wander Pires' },
+      technologies: [{ id: TECHNOLOGY_ID, name: 'Node.js' }],
+      feedbacks: [],
+      createdAt: CREATED_AT,
+    }],
+    total: 1,
+  });
+  projectRepository.upvote = async (id) => (id === PROJECT_ID ? { id, upvotes: 3 } : null);
+  feedbackRepository.create = async (input) => ({
+    feedback: { id: FEEDBACK_ID, ...input, createdAt: CREATED_AT },
+    averageRating: 5,
+  });
   feedbackRepository.findByProjectId = async (projectId) => [{
     id: FEEDBACK_ID,
     projectId,
@@ -123,10 +132,11 @@ test('POST /api/projects cadastra projeto e relacionamentos', async () => {
   assert.equal(result.body.technologies[0].id, TECHNOLOGY_ID);
 });
 
-test('GET /api/projects lista projetos', async () => {
-  const result = await request('/api/projects');
+test('GET /api/projects filtra e pagina projetos', async () => {
+  const result = await request('/api/projects?technology=Node.js&page=1&limit=10');
   assert.equal(result.status, 200);
-  assert.equal(result.body[0].title, 'DevShowcase API');
+  assert.equal(result.body.data[0].title, 'DevShowcase API');
+  assert.deepEqual(result.body.pagination, { page: 1, limit: 10, total: 1, totalPages: 1 });
 });
 
 test('POST /api/projects/:projectId/feedbacks cadastra feedback', async () => {
@@ -139,8 +149,22 @@ test('POST /api/projects/:projectId/feedbacks cadastra feedback', async () => {
     }),
   });
   assert.equal(result.status, 201);
-  assert.equal(result.body.id, FEEDBACK_ID);
-  assert.equal(result.body.rating, 5);
+  assert.equal(result.body.feedback.id, FEEDBACK_ID);
+  assert.equal(result.body.feedback.rating, 5);
+  assert.equal(result.body.averageRating, 5);
+});
+
+test('PUT /api/projects/:projectId/upvote incrementa curtidas', async () => {
+  const result = await request(`/api/projects/${PROJECT_ID}/upvote`, { method: 'PUT' });
+  assert.equal(result.status, 200);
+  assert.equal(result.body.upvotes, 3);
+});
+
+test('PUT /api/projects/:projectId/upvote retorna 404 para projeto ausente', async () => {
+  const missingId = '523e4567-e89b-42d3-a456-426614174000';
+  const result = await request(`/api/projects/${missingId}/upvote`, { method: 'PUT' });
+  assert.equal(result.status, 404);
+  assert.equal(result.body.error, 'Projeto nao encontrado.');
 });
 
 test('GET /api/projects/:projectId/feedbacks lista feedbacks', async () => {
@@ -163,4 +187,10 @@ test('campos obrigatorios e URLs invalidas retornam 422', async () => {
   });
   assert.equal(result.status, 422);
   assert.equal(result.body.error, 'Dados de entrada invalidos.');
+});
+
+test('JSON malformado retorna 400', async () => {
+  const result = await request('/api/projects', { method: 'POST', body: '{' });
+  assert.equal(result.status, 400);
+  assert.equal(result.body.error, 'JSON invalido.');
 });

@@ -1,11 +1,11 @@
 const feedbackRepository = require('../repositories/feedbackRepository');
-const { parseFeedbackInput, toFeedbackOutput } = require('../dtos/feedbackDto');
+const feedbackService = require('../services/feedbackService');
+const { toFeedbackOutput } = require('../dtos/feedbackDto');
 const { validUuid } = require('../dtos/validation');
 
 async function create(req, res) {
-  const input = parseFeedbackInput(req.body, req.params.projectId);
-  const feedback = await feedbackRepository.create(input);
-  res.status(201).json(toFeedbackOutput(feedback));
+  const result = await feedbackService.create(req.body, req.params.projectId);
+  res.status(201).json(result);
 }
 
 async function findByProjectId(req, res) {

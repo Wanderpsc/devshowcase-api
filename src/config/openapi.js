@@ -1,5 +1,6 @@
 const idSchema = { type: 'string', format: 'uuid' };
 const errorResponses = {
+  400: { description: 'Requisicao malformada' },
   422: { description: 'Dados de entrada invalidos' },
   500: { description: 'Erro interno do servidor' },
 };
@@ -8,10 +9,10 @@ module.exports = {
   openapi: '3.0.3',
   info: {
     title: 'DevShowcase API',
-    version: '1.0.0',
+    version: '2.0.0',
     description: 'API REST para portfolios de desenvolvedores.',
   },
-  servers: [{ url: 'http://localhost:3000', description: 'Ambiente local' }],
+  servers: [{ url: '/', description: 'Servidor atual' }],
   tags: [
     { name: 'Profiles' },
     { name: 'Technologies' },
@@ -66,8 +67,28 @@ module.exports = {
       },
       get: {
         tags: ['Projects'],
-        summary: 'Listar projetos',
-        responses: { 200: { description: 'Lista de projetos' }, 500: errorResponses[500] },
+        summary: 'Listar projetos com filtro e paginacao',
+        parameters: [
+          { name: 'technology', in: 'query', schema: { type: 'string' }, description: 'Nome exato da tecnologia' },
+          { name: 'page', in: 'query', schema: { type: 'integer', minimum: 1, default: 1 } },
+          { name: 'limit', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 100, default: 10 } },
+        ],
+        responses: { 200: { description: 'Pagina de projetos' }, ...errorResponses },
+      },
+    },
+    '/api/projects/{projectId}/upvote': {
+      put: {
+        tags: ['Projects'],
+        summary: 'Incrementar as curtidas de um projeto',
+        parameters: [{ name: 'projectId', in: 'path', required: true, schema: idSchema }],
+        responses: {
+          200: {
+            description: 'Curtida registrada',
+            content: { 'application/json': { schema: { $ref: '#/components/schemas/UpvoteOutput' } } },
+          },
+          404: { description: 'Projeto nao encontrado' },
+          ...errorResponses,
+        },
       },
     },
     '/api/projects/{projectId}/feedbacks': {
@@ -79,7 +100,14 @@ module.exports = {
           required: true,
           content: { 'application/json': { schema: { $ref: '#/components/schemas/FeedbackInput' } } },
         },
-        responses: { 201: { description: 'Feedback criado' }, ...errorResponses },
+        responses: {
+          201: {
+            description: 'Feedback criado e media atualizada',
+            content: { 'application/json': { schema: { $ref: '#/components/schemas/FeedbackResult' } } },
+          },
+          404: { description: 'Projeto nao encontrado' },
+          ...errorResponses,
+        },
       },
       get: {
         tags: ['Feedbacks'],
@@ -125,6 +153,20 @@ module.exports = {
           authorName: { type: 'string', example: 'Avaliador' },
           comment: { type: 'string', example: 'Projeto bem estruturado.' },
           rating: { type: 'integer', minimum: 1, maximum: 5, example: 5 },
+        },
+      },
+      FeedbackResult: {
+        type: 'object',
+        properties: {
+          feedback: { allOf: [{ $ref: '#/components/schemas/FeedbackInput' }], type: 'object' },
+          averageRating: { type: 'number', minimum: 1, maximum: 5, example: 4.5 },
+        },
+      },
+      UpvoteOutput: {
+        type: 'object',
+        properties: {
+          id: idSchema,
+          upvotes: { type: 'integer', minimum: 1, example: 8 },
         },
       },
     },

@@ -26,6 +26,8 @@ CREATE TABLE IF NOT EXISTS projects (
   description TEXT NOT NULL CHECK (length(trim(description)) > 0),
   repository_url TEXT NOT NULL,
   demo_url TEXT,
+  average_rating NUMERIC(3, 2) NOT NULL DEFAULT 0 CHECK (average_rating BETWEEN 0 AND 5),
+  upvotes INTEGER NOT NULL DEFAULT 0 CHECK (upvotes >= 0),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -44,6 +46,9 @@ CREATE TABLE IF NOT EXISTS feedbacks (
   rating SMALLINT NOT NULL CHECK (rating BETWEEN 1 AND 5),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS average_rating NUMERIC(3, 2) NOT NULL DEFAULT 0;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS upvotes INTEGER NOT NULL DEFAULT 0;
 
 CREATE INDEX IF NOT EXISTS projects_profile_id_idx ON projects(profile_id);
 CREATE INDEX IF NOT EXISTS feedbacks_project_id_idx ON feedbacks(project_id);
